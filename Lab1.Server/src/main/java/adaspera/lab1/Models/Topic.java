@@ -12,31 +12,16 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Post {
+public class Topic {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(nullable = false)
-    private String title;
+    @Column(unique=true, nullable=false)
+    private String name;
 
-    @Lob
-    @Column(nullable = false)
-    private byte[] imageData;
-
-    @Column(nullable = false)
-    private String imageType;
-
-    @ManyToMany
-    @JoinTable(
-            name = "post_topic",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "topic_id")
-    )
-    private Set<Topic> topics;
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<Comment> comments;
+    @ManyToMany(mappedBy = "topics")
+    private Set<Post> posts;
 
     @Version
     private int optLockVersion;
@@ -45,8 +30,8 @@ public class Post {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return Objects.equals(id, post.id);
+        Topic topic = (Topic) o;
+        return Objects.equals(id, topic.id);
     }
 
     @Override

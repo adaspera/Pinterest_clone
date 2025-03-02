@@ -1,27 +1,20 @@
-import {useEffect, useState} from "react";
-import axios from "axios";
+import AppRoutes from "./AppRoutes.tsx";
+import Layout from "./Layout.tsx";
+import { Route, Routes } from 'react-router-dom';
 
 function App() {
-    const API_URL = "http://localhost:8080/Lab1.Server-1.0-SNAPSHOT/api/hello-world";
 
-    const [message, setMessage] = useState("");
-
-    useEffect(() => {
-        axios.get(API_URL)
-            .then((response) => {
-                setMessage(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-                setMessage("Error fetching message");
-            });
-    }, []);
-
-    console.log(message)
 
     return (
-    <p>{message}</p>
-    )
+        <Layout>
+            <Routes>
+                {AppRoutes.map((route, index) => {
+                    const { element, ...rest } = route;
+                    return <Route key={index} {...rest} element={element} />;
+                })}
+            </Routes>
+        </Layout>
+    );
 }
 
 export default App
