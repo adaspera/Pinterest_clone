@@ -1,4 +1,4 @@
-﻿package adaspera.lab1.Models.DTOs;
+package adaspera.lab1.Models.DTOs;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.Set;
 public class CreatePostDto {
     private String title;
 
-    private byte[] imageData;
+    private String imageData;
 
     private String imageType;
 

@@ -1,4 +1,4 @@
-﻿package adaspera.lab1.Models.DTOs;
+package adaspera.lab1.Models.DTOs;
 
 import lombok.Getter;
 import lombok.Setter;

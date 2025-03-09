@@ -1,7 +1,5 @@
-﻿package adaspera.lab1.Models.DTOs;
+package adaspera.lab1.Models.DTOs;
 
-import adaspera.lab1.Models.Comment;
-import adaspera.lab1.Models.Topic;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +16,7 @@ public class GetPostDto {
 
     private String imageType;
 
-    private Set<Topic> topics;
+    private Set<TopicDto> topics;
 
-    private Set<Comment> comments;
+    private Set<CommentDto> comments;
 }
