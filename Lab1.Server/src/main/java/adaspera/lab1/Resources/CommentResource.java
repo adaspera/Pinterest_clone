@@ -7,6 +7,7 @@ import adaspera.lab1.Models.DTOs.CommentDto;
 import adaspera.lab1.Models.Post;
 import adaspera.lab1.Utils.Mappers.CommentMapper;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -48,6 +49,7 @@ public class CommentResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public Response createComment(CommentDto commentDto) {
         Post post = postDao.findById(commentDto.getPostId());
         if (post == null) {

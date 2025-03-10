@@ -3,10 +3,12 @@ import Masonry from "@mui/lab/Masonry"
 import {Box, ImageListItem} from "@mui/material";
 import {fetchPosts, fetchPostsByTopicId, Post} from "../api/postApi.ts";
 import {useLocation} from "react-router";
+import {useNavigate} from "react-router-dom";
 
 function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -33,6 +35,7 @@ function Home() {
                                 display: 'block',
                                 width: '100%',
                             }}
+                            onClick={() => navigate(`/post?postId=${post.id}`)}
                         />
                     </ImageListItem>
                 ))}

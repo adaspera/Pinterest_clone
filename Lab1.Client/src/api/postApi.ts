@@ -12,6 +12,13 @@ export interface Post {
     imageBase64?: string;
 }
 
+export interface CreatePostDto {
+    title: string;
+    imageData: string | ArrayBuffer | null;
+    imageType: string;
+    topicIds: number[];
+}
+
 export const fetchPosts = async (): Promise<Post[]> => {
     const response = await axiosInstance.get<Post[]>('/posts');
 
@@ -64,7 +71,7 @@ export const fetchPostsByTopicId = async (id: number): Promise<Post[]> => {
     return postsWithBase64;
 }
 
-export const createPost = async (data: Post): Promise<Post> => {
+export const createPost = async (data: CreatePostDto): Promise<Post> => {
     const response = await axiosInstance.post<Post>('/posts', data);
     return response.data;
 };

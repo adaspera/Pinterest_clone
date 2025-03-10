@@ -23,6 +23,10 @@ public class PostDao {
         return em.find(Post.class, id);
     }
 
+    public List<Post> findAll() {
+        return em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
+    }
+
     @Transactional
     public void update(Post post) {
         em.merge(post);

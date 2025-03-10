@@ -24,7 +24,7 @@ const AppDrawer = () => {
     }, []);
 
     const handleTopicClick = (path: string) => {
-        navigate(`?topicId=${path}`);
+        navigate(`/?topicId=${path}`);
     };
 
     const handleOpenTopicModal = () => setOpenTopicModal(true);
@@ -51,6 +51,11 @@ const AppDrawer = () => {
         if (newPost.title.trim() !== "" && newPost.image && newPost.topicIds.length > 0) {
             const reader = new FileReader();
             reader.onload = () => {
+                if (!newPost.image) {
+                    alert("Please select an image");
+                    return;
+                }
+
                 const payload = {
                     title: newPost.title,
                     topicIds: newPost.topicIds,
@@ -62,17 +67,17 @@ const AppDrawer = () => {
                     .then(() => {
                         setNewPost({ title: "", image: null, topicIds: [] });
                         handleClosePostModal();
-                        alert("Post created successfully!");
+                        alert("Post created successfully");
                     })
                     .catch((error) => {
-                        console.error("Error creating post:", error);
+                        console.error("Error creating post: ", error);
                         console.log(error.message);
-                        alert("Failed to create post.");
+                        alert("Failed to create post");
                     });
             };
             reader.readAsDataURL(newPost.image);
         } else {
-            alert("Please fill out all fields and select at least one topic.");
+            alert("Please fill out all fields");
         }
     };
 
@@ -113,9 +118,9 @@ const AppDrawer = () => {
                 <Box
                     sx={{
                         position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
                         width: 400,
                         bgcolor: "background.paper",
                         boxShadow: 24,
