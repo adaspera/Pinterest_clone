@@ -7,6 +7,7 @@ import adaspera.lab1.Models.Topic;
 import adaspera.lab1.Utils.Mappers.CommentMapper;
 import adaspera.lab1.Utils.Mappers.TopicMapper;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -36,6 +37,7 @@ public class TopicResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public Response createTopic(TopicDto topicDto) {
         Topic topic = TopicMapper.toTopic(topicDto);
         topicDao.create(topic);

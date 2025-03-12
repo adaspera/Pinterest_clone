@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="default" targetRuntime="MyBatis3">
+        <jdbcConnection driverClass="org.postgresql.Driver"
+                        connectionURL="jdbc:postgresql://localhost:5432/Lab1db"
+                        userId="postgres"
+                        password="admin">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="adaspera.lab1.Models.Mybatis" targetProject="src/main/java"/>
+
+        <sqlMapGenerator targetPackage="adaspera.lab1.Dao.Mybatis.xml" targetProject="src/main/java"/>
+
+        <javaClientGenerator
+                type="XMLMAPPER"
+                targetPackage="adaspera.lab1.Dao.Mybatis"
+                targetProject="src/main/java">
+        </javaClientGenerator>
+
+        <table tableName="comment" domainObjectName="Comment" />
+        <table tableName="post" domainObjectName="Post" />
+        <table tableName="topic" domainObjectName="Topic" />
+        <table tableName="post_topic" domainObjectName="PostTopic" />
+    </context>
+</generatorConfiguration>

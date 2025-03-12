@@ -4,6 +4,7 @@ import adaspera.lab1.Models.Comment;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -11,10 +12,9 @@ import java.util.List;
 @ApplicationScoped
 public class CommentDao {
 
-    @Inject
+    @PersistenceContext(unitName = "default")
     private EntityManager em;
 
-    @Transactional
     public void create(Comment comment) {
         em.persist(comment);
     }
@@ -23,12 +23,10 @@ public class CommentDao {
         return em.find(Comment.class, id);
     }
 
-    @Transactional
     public void update(Comment comment) {
         em.merge(comment);
     }
 
-    @Transactional
     public void delete(Comment comment) {
         em.remove(comment);
     }

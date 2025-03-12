@@ -4,6 +4,7 @@ import adaspera.lab1.Models.Topic;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -11,10 +12,9 @@ import java.util.List;
 @ApplicationScoped
 public class TopicDao {
 
-    @Inject
+    @PersistenceContext(unitName = "default")
     private EntityManager em;
 
-    @Transactional
     public void create(Topic topic) {
         em.persist(topic);
     }
@@ -27,12 +27,10 @@ public class TopicDao {
         return em.createQuery("select t from Topic t", Topic.class).getResultList();
     }
 
-    @Transactional
     public void update(Topic topic) {
         em.merge(topic);
     }
 
-    @Transactional
     public void delete(Topic topic) {
         em.remove(em.merge(topic));
     }

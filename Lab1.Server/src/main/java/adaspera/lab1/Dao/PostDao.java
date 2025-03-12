@@ -5,16 +5,17 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
 public class PostDao {
-    @Inject
+
+    @PersistenceContext(unitName = "default")
     private EntityManager em;
 
-    @Transactional
     public void create(Post post) {
         em.persist(post);
     }
@@ -27,12 +28,10 @@ public class PostDao {
         return em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
     }
 
-    @Transactional
     public void update(Post post) {
         em.merge(post);
     }
 
-    @Transactional
     public void delete(Post post) {
         em.remove(post);
     }

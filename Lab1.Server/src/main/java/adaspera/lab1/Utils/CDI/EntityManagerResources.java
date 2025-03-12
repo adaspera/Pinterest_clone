@@ -1,4 +1,4 @@
-package adaspera.lab1.Resources;
+package adaspera.lab1.Utils.CDI;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
@@ -10,8 +10,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
 import jakarta.persistence.SynchronizationType;
 
+// Deprecated
 @ApplicationScoped
-public class Resources {
+public class EntityManagerResources {
 
     @PersistenceUnit
     private EntityManagerFactory emf;
