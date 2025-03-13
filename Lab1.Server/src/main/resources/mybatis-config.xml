@@ -19,9 +19,6 @@
 <!--        <mapper resource="adaspera/lab1/Mybatis/PostMapper.xml"/>-->
 <!--        <mapper resource="adaspera/lab1/Mybatis/TopicMapper.xml"/>-->
 <!--        <mapper resource="adaspera/lab1/Mybatis/PostTopicMapper.xml"/>-->
-        <mapper resource="xml/CommentMapper.xml"/>
-        <mapper resource="xml/PostMapper.xml"/>
-        <mapper resource="xml/TopicMapper.xml"/>
-        <mapper resource="xml/PostTopicMapper.xml"/>
+        <mapper resource="TopicSqlMapper.xml"/>
     </mappers>
 </configuration>

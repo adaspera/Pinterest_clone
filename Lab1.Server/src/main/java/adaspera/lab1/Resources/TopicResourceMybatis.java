@@ -2,10 +2,8 @@ package adaspera.lab1.Resources;
 
 import adaspera.lab1.Dao.MybatisTopicDao;
 import adaspera.lab1.Dao.TopicDao;
-import adaspera.lab1.Models.DTOs.CommentDto;
 import adaspera.lab1.Models.DTOs.TopicDto;
 import adaspera.lab1.Models.Topic;
-import adaspera.lab1.Utils.Mappers.CommentMapper;
 import adaspera.lab1.Utils.Mappers.TopicMapper;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -17,17 +15,16 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Path("/topics")
-public class TopicResource {
+@Path("/topics/mybatis")
+public class TopicResourceMybatis {
     @Inject
-    TopicDao topicDao;
+    MybatisTopicDao mybatisTopicDao;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllTopics() {
-        List<Topic> topics = topicDao.getAll();
+        List<Topic> topics = mybatisTopicDao.getAll();
 
         List<TopicDto> topicDtos = topics.stream()
                 .map(TopicMapper::toTopicDto)
@@ -38,11 +35,11 @@ public class TopicResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response createTopic(TopicDto topicDto) {
         Topic topic = TopicMapper.toTopic(topicDto);
-        topicDao.create(topic);
+        mybatisTopicDao.create(topic);
 
         return Response.status(Response.Status.CREATED).entity(TopicMapper.toTopicDto(topic)).build();
     }
 }
+

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="adaspera.lab1.Dao.Mybatis.TopicSqlMapper">
+
+    <insert id="create" parameterType="adaspera.lab1.Models.Topic" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO Topic (name, optLockVersion)
+        VALUES (#{name}, #{optLockVersion})
+    </insert>
+
+    <select id="findById" parameterType="int" resultType="adaspera.lab1.Models.Topic">
+        SELECT id, name, optLockVersion
+        FROM Topic
+        WHERE id = #{id}
+    </select>
+
+    <select id="getAll" resultType="adaspera.lab1.Models.Topic">
+        SELECT id, name, optLockVersion
+        FROM Topic
+    </select>
+
+    <update id="update" parameterType="adaspera.lab1.Models.Topic">
+        UPDATE Topic
+        SET name = #{name}, optLockVersion = #{optLockVersion}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="adaspera.lab1.Models.Topic">
+        DELETE FROM Topic
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

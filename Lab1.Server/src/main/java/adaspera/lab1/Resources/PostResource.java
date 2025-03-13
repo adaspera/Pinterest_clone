@@ -26,21 +26,6 @@ public class PostResource {
     @Inject
     TopicDao topicDao;
 
-    @Inject
-    SqlSession sqlSession;
-
-    @Path("/baudejas")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
-    public Response getAllPostsMybatis() {
-
-        adaspera.lab1.Models.Mybatis.Post post = sqlSession.getMapper(adaspera.lab1.Dao.Mybatis.PostMapper.class)
-                .selectByPrimaryKey(Integer.toUnsignedLong(1));
-
-        return Response.status(Response.Status.OK).entity(post).build();
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional

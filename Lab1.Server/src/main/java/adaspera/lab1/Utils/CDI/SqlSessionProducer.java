@@ -15,7 +15,7 @@ public class SqlSessionProducer {
     @Produces
     @RequestScoped
     public SqlSession createSqlSession() {
-        return sqlSessionFactory.openSession();
+        return sqlSessionFactory.openSession(true);
     }
 
     public void closeSqlSession(@Disposes SqlSession sqlSession) {
