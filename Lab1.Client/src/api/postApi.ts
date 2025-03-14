@@ -76,3 +76,7 @@ export const createPost = async (data: CreatePostDto): Promise<Post> => {
     return response.data;
 };
 
+export const deletePost = async (id: number) => {
+    const response = await axiosInstance.delete<Post>(`/posts/${id}`);
+    return response;
+};

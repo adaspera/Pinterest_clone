@@ -38,6 +38,7 @@ const AppDrawer = () => {
             const topicToCreate = { name: newTopic };
             createTopic(topicToCreate)
                 .then((createdTopic) => {
+                    console.log(createdTopic);
                     setTopics((prevTopics) => [...prevTopics, createdTopic]);
                     setNewTopic("");
                     handleCloseTopicModal();

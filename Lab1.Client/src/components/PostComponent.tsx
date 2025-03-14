@@ -1,5 +1,5 @@
 ﻿import {useEffect, useState} from "react";
-import {fetchPostById, fetchPostsByTopicId, Post} from "../api/postApi.ts";
+import {deletePost, fetchPostById, fetchPostsByTopicId, Post} from "../api/postApi.ts";
 import {useLocation} from "react-router";
 import {useNavigate} from "react-router-dom";
 import Masonry from "@mui/lab/Masonry";
@@ -53,6 +53,20 @@ const PostComponent = () => {
         }
     };
 
+    const handleDeletePost = () => {
+        if (post) {
+            deletePost(post.id)
+                .then( () => {
+                    navigate("/");
+                })
+                .catch((error) => {
+                    console.error("Error deleting post: ", error);
+                    alert("Failed to delete post");
+                });
+        }
+
+    }
+
     return (
         <Box sx={{ width: "100%", minHeight: "100vh", padding: 2 }}>
             {post && (
@@ -69,6 +83,13 @@ const PostComponent = () => {
                                 objectFit: "contain",
                             }}
                         />
+                        <Button
+                            variant="outlined"
+                            onClick={handleDeletePost}
+                            sx={{m: 2}}
+                        >
+                            Delete
+                        </Button>
                     </Box>
 
                     <Box sx={{ flex: 1, padding: 2 }}>

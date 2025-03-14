@@ -96,4 +96,20 @@ public class PostResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create post: " + e.getMessage()).build();
         }
     }
+
+    @Path("/{id}")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response deletePost(@PathParam("id") Integer id) {
+
+        Post post = postDao.findById(id);
+        if (post == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        postDao.delete(post);
+
+        return Response.ok().build();
+    }
 }

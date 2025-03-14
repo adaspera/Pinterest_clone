@@ -23,9 +23,9 @@ function Home() {
 
     return (
         <Box sx={{ width: "100%", height: "100vh" }}>
-            <Masonry columns={3} spacing={2}>
+            <Masonry columns={4} spacing={2}>
                 {posts.map((post, index) => (
-                    <ImageListItem key={index}>
+                    <ImageListItem key={index} sx={{minWidth: 200}}>
                         <img
                             src={post.imageBase64}
                             alt={`Image ${index}`}
