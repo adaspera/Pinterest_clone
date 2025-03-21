@@ -2,11 +2,8 @@ package adaspera.lab1.Dao;
 
 import adaspera.lab1.Models.Post;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -24,7 +21,7 @@ public class PostDao {
         return em.find(Post.class, id);
     }
 
-    public List<Post> findAll() {
+    public List<Post> getAll() {
         return em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
     }
 

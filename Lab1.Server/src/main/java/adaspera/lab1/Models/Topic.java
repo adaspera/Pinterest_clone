@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -21,7 +21,7 @@ public class Topic {
     private String name;
 
     @ManyToMany(mappedBy = "topics")
-    private Set<Post> posts;
+    private List<Post> posts;
 
     @Version
     private int optLockVersion;

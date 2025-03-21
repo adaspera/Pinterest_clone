@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,12 +21,8 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
-    @Lob
     @Column(nullable = false)
-    private byte[] imageData;
-
-    @Column(nullable = false)
-    private String imageType;
+    private String content;
 
     @ManyToMany
     @JoinTable(
@@ -33,10 +30,10 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "topic_id")
     )
-    private Set<Topic> topics;
+    private List<Topic> topics;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<Comment> comments;
+    private List<Comment> comments;
 
     @Version
     private int optLockVersion;

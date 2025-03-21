@@ -4,11 +4,12 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.0">
     <persistence-unit name="default">
-        <jta-data-source>java:/PostgresDS</jta-data-source>
+        <jta-data-source>java:/PostgresSimpleDS</jta-data-source>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.use_sql_comments" value="true"/>
+            <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

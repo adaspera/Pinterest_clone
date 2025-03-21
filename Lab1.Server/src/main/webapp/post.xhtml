@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Post Details</title>
+
+    <style>
+        label {
+            display: flex;
+            padding-bottom: 5px;
+        }
+        .form-group {
+            padding: 10px;
+            background-color: antiquewhite;
+        }
+        .form-group input[type="submit"] {
+            display: flex;
+            margin-top: 5px;
+        }
+    </style>
+</h:head>
+<h:body>
+    <h1>#{postBean.post.title}</h1>
+    <p>#{postBean.post.content}</p>
+
+    <h2>Comments</h2>
+    <h:dataTable value="#{postBean.post.comments}" var="comment">
+        <h:column>
+            <strong>#{comment.username}</strong>: #{comment.content}
+        </h:column>
+    </h:dataTable>
+
+    <h:form class="form-group">
+        <h:outputLabel value="Comment:" />
+        <h:inputText value="#{postBean.newCommentContent}" />
+        <h:outputLabel value="Username:" />
+        <h:inputText value="#{postBean.newCommentUsername}" />
+        <h:commandButton value="Add Comment" action="#{postBean.addComment}" />
+    </h:form>
+
+    <h2>Topics</h2>
+    <h:form>
+        <ui:repeat value="#{postBean.post.topics}" var="topic">
+            <li>
+                <h:commandLink value="#{topic.name}" action="#{postBean.viewPostsByTopic(topic.id)}" />
+            </li>
+        </ui:repeat>
+    </h:form>
+
+
+
+    <h:form>
+        <h:commandLink value="Back to All Posts" action="#{postBean.viewAllPosts}" />
+    </h:form>
+</h:body>
+</html>
