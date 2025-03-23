@@ -40,12 +40,6 @@ public class PostBean implements Serializable {
     private List<Post> posts;
 
     @Getter @Setter
-    private String newCommentContent;
-
-    @Getter @Setter
-    private String newCommentUsername;
-
-    @Getter @Setter
     private int selectedTopicId;
 
     @Getter @Setter
@@ -78,15 +72,12 @@ public class PostBean implements Serializable {
     }
 
     @Transactional
-    public void addComment() {
-        Comment comment = new Comment();
-        comment.setContent(newCommentContent);
-        comment.setUsername(newCommentUsername);
-        comment.setPost(post);
-        post.getComments().add(comment);
-        postDao.update(post);
-        newCommentContent = "";
-        newCommentUsername = "";
+    public String handleDeletePost() {
+        post = postDao.findById(selectedPostId);
+        posts.remove(post);
+        postDao.delete(post);
+
+        return "index.xhtml?faces-redirect=true";
     }
 
     public String viewPostsByTopic(int topicId) {

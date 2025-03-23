@@ -23,6 +23,9 @@
 <h:body>
     <h1>#{postBean.post.title}</h1>
     <p>#{postBean.post.content}</p>
+    <h:form>
+        <h:commandButton value="Delete" action="#{postBean.handleDeletePost}"/>
+    </h:form>
 
     <h2>Comments</h2>
     <h:dataTable value="#{postBean.post.comments}" var="comment">
@@ -33,10 +36,10 @@
 
     <h:form class="form-group">
         <h:outputLabel value="Comment:" />
-        <h:inputText value="#{postBean.newCommentContent}" />
+        <h:inputText value="#{commentBean.newComment.content}" />
         <h:outputLabel value="Username:" />
-        <h:inputText value="#{postBean.newCommentUsername}" />
-        <h:commandButton value="Add Comment" action="#{postBean.addComment}" />
+        <h:inputText value="#{commentBean.newComment.username}" />
+        <h:commandButton value="Add Comment" action="#{commentBean.addComment}" />
     </h:form>
 
     <h2>Topics</h2>
