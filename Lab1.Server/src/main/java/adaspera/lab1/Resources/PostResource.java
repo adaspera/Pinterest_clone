@@ -4,10 +4,12 @@ import adaspera.lab1.Dao.PostDao;
 import adaspera.lab1.Dao.TopicDao;
 import adaspera.lab1.Models.DTOs.CreatePostDto;
 import adaspera.lab1.Models.DTOs.GetPostDto;
+import adaspera.lab1.Models.DTOs.UpdatePostDto;
 import adaspera.lab1.Models.Post;
 import adaspera.lab1.Models.Topic;
 import adaspera.lab1.Utils.Mappers.PostMapper;
 import jakarta.inject.Inject;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -111,5 +113,65 @@ public class PostResource {
         postDao.delete(post);
 
         return Response.ok().build();
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response updatePost(UpdatePostDto postDto) {
+
+        Post post = postDao.findById(postDto.getId());
+        if (post == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        post.setTitle(postDto.getTitle());
+
+        Set<Topic> topics = postDto.getTopicIds().stream().map(topicDao::findById).collect(Collectors.toSet());
+        post.setTopics(topics);
+
+        postDao.update(post);
+        GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
+
+        return Response.ok(updatedPostDto).build();
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response updatePostVersionSafe(UpdatePostDto postDto) {
+        int retryCount = 0;
+        boolean success = false;
+
+        while (!success && retryCount < 3) {
+            try {
+                Post post = postDao.findById(postDto.getId());
+                if (post == null) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+                post.setTitle(postDto.getTitle());
+
+                Set<Topic> topics = postDto.getTopicIds().stream().map(topicDao::findById).collect(Collectors.toSet());
+                post.setTopics(topics);
+
+                postDao.update(post);
+
+                GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
+
+                success = true;
+                return Response.ok(updatedPostDto).build();
+            } catch (OptimisticLockException e) {
+                retryCount++;
+                if (retryCount >= 3) {
+                    return Response.status(Response.Status.CONFLICT)
+                            .entity("Failed to update post after 3 tries")
+                            .build();
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException er) {}
+            }
+        }
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 }

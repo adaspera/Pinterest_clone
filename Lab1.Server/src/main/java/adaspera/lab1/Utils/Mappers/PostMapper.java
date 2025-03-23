@@ -1,10 +1,8 @@
 package adaspera.lab1.Utils.Mappers;
 
-import adaspera.lab1.Models.DTOs.CommentDto;
-import adaspera.lab1.Models.DTOs.CreatePostDto;
-import adaspera.lab1.Models.DTOs.GetPostDto;
-import adaspera.lab1.Models.DTOs.TopicDto;
+import adaspera.lab1.Models.DTOs.*;
 import adaspera.lab1.Models.Post;
+import adaspera.lab1.Models.Topic;
 
 import java.util.*;
 import java.util.stream.Collectors;
