@@ -88,8 +88,8 @@ const PostComponent = () => {
     }
 
     const handleUpdatePost = () => {
-        setUpdatedPost({...updatedPost, id: Number(post?.id)});
-        updatePost(updatedPost)
+        const updatedPostDto: UpdatePostDto = {...updatedPost, id: Number(post?.id)};
+        updatePost(updatedPostDto)
             .then(setPost)
             .catch( (error) => {
                 console.error("Error updating post: ", error);

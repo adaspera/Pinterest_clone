@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
@@ -24,12 +25,16 @@ public class PostDao {
         return em.find(Post.class, id);
     }
 
+    public Post findById(int id, LockModeType lock) {
+        return em.find(Post.class, id, lock);
+    }
+
     public List<Post> findAll() {
         return em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
     }
 
-    public void update(Post post) {
-        em.merge(post);
+    public Post update(Post post) {
+        return em.merge(post);
     }
 
     public void delete(Post post) {

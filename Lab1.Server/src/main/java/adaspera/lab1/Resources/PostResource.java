@@ -9,7 +9,9 @@ import adaspera.lab1.Models.Post;
 import adaspera.lab1.Models.Topic;
 import adaspera.lab1.Utils.Mappers.PostMapper;
 import jakarta.inject.Inject;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.RollbackException;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -115,60 +117,64 @@ public class PostResource {
         return Response.ok().build();
     }
 
+//    @PUT
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Transactional
+//    public Response updatePost(UpdatePostDto postDto) {
+//
+//        Post post = postDao.findById(postDto.getId());
+//        if (post == null) {
+//            return Response.status(Response.Status.NOT_FOUND).build();
+//        }
+//        post.setTitle(postDto.getTitle());
+//
+//        Set<Topic> topics = postDto.getTopicIds().stream().map(topicDao::findById).collect(Collectors.toSet());
+//        post.setTopics(topics);
+//
+//        postDao.update(post);
+//        GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
+//
+//        return Response.ok(updatedPostDto).build();
+//    }
+
+
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
+    @Transactional(dontRollbackOn =  RollbackException.class)
     public Response updatePost(UpdatePostDto postDto) {
+        int MAX_RETRIES = 3;
+        int attempts = 0;
 
-        Post post = postDao.findById(postDto.getId());
-        if (post == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        post.setTitle(postDto.getTitle());
+        while (attempts < MAX_RETRIES) {
+            attempts++;
 
-        Set<Topic> topics = postDto.getTopicIds().stream().map(topicDao::findById).collect(Collectors.toSet());
-        post.setTopics(topics);
-
-        postDao.update(post);
-        GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
-
-        return Response.ok(updatedPostDto).build();
-    }
-
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
-    public Response updatePostVersionSafe(UpdatePostDto postDto) {
-        int retryCount = 0;
-        boolean success = false;
-
-        while (!success && retryCount < 3) {
             try {
-                Post post = postDao.findById(postDto.getId());
+                Post post = postDao.findById(postDto.getId(), LockModeType.OPTIMISTIC);
+                Thread.sleep(2000);
                 if (post == null) {
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }
+
                 post.setTitle(postDto.getTitle());
 
-                Set<Topic> topics = postDto.getTopicIds().stream().map(topicDao::findById).collect(Collectors.toSet());
+                Set<Topic> topics = postDto.getTopicIds().stream()
+                        .map(topicDao::findById)
+                        .collect(Collectors.toSet());
                 post.setTopics(topics);
 
                 postDao.update(post);
 
                 GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
-
-                success = true;
                 return Response.ok(updatedPostDto).build();
+
             } catch (OptimisticLockException e) {
-                retryCount++;
-                if (retryCount >= 3) {
+                if (attempts >= MAX_RETRIES) {
                     return Response.status(Response.Status.CONFLICT)
-                            .entity("Failed to update post after 3 tries")
+                            .entity("Unable to update post due to concurrent modifications.")
                             .build();
                 }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException er) {}
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
