@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import {createComment} from "../api/commentApi.ts";
 import {getAllTopics, Topic} from "../api/topicApi.ts";
+import {toast, ToastContainer} from "react-toastify";
 
 const PostComponent = () => {
     const [post, setPost] = useState<Post | null>(null);
@@ -89,13 +90,33 @@ const PostComponent = () => {
 
     const handleUpdatePost = () => {
         const updatedPostDto: UpdatePostDto = {...updatedPost, id: Number(post?.id)};
-        updatePost(updatedPostDto)
-            .then(setPost)
-            .catch( (error) => {
-                console.error("Error updating post: ", error);
-                alert("Failed to update post");
-            })
-            .finally(handleClosePostModal);
+
+        toast.promise(
+            updatePost(updatedPostDto),
+            {
+                pending: 'Updating post...',
+                success: {
+                    render({ data }) {
+                        setPost(data);
+                        handleClosePostModal();
+                        return 'Post updated successfully!';
+                    },
+                    autoClose: 3000,
+                },
+                error: {
+                    render({ data }) {
+                        console.error("Error updating post: ", data);
+
+                        // @ts-expect-error undefined data
+                        if (data?.response?.status === 409) {
+                            return 'This post was modified by another user. Please refresh and try again.';
+                        }
+                        return 'An unexpected error occurred while updating the post.';
+                    },
+                    autoClose: 5000,
+                }
+            }
+        );
     }
 
     return (
@@ -245,6 +266,8 @@ const PostComponent = () => {
                     </Button>
                 </Box>
             </Modal>
+
+            <ToastContainer/>
         </>
 
     );

@@ -11,8 +11,8 @@ import adaspera.lab1.Utils.Mappers.PostMapper;
 import jakarta.inject.Inject;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.OptimisticLockException;
-import jakarta.persistence.RollbackException;
-import jakarta.transaction.Transactional;
+import jakarta.transaction.*;
+import jakarta.transaction.NotSupportedException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -29,6 +29,9 @@ public class PostResource {
 
     @Inject
     TopicDao topicDao;
+
+    @Inject
+    UserTransaction ut;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -117,67 +120,71 @@ public class PostResource {
         return Response.ok().build();
     }
 
-//    @PUT
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Transactional
-//    public Response updatePost(UpdatePostDto postDto) {
-//
-//        Post post = postDao.findById(postDto.getId());
-//        if (post == null) {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        }
-//        post.setTitle(postDto.getTitle());
-//
-//        Set<Topic> topics = postDto.getTopicIds().stream().map(topicDao::findById).collect(Collectors.toSet());
-//        post.setTopics(topics);
-//
-//        postDao.update(post);
-//        GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
-//
-//        return Response.ok(updatedPostDto).build();
-//    }
-
-
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional(dontRollbackOn =  RollbackException.class)
+    @Transactional
     public Response updatePost(UpdatePostDto postDto) {
-        int MAX_RETRIES = 3;
-        int attempts = 0;
 
-        while (attempts < MAX_RETRIES) {
-            attempts++;
+        Post post = postDao.findById(postDto.getId());
+        if (post == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        post.setTitle(postDto.getTitle());
 
+        Set<Topic> topics = postDto.getTopicIds().stream().map(topicDao::findById).collect(Collectors.toSet());
+        post.setTopics(topics);
+
+        try {
+            Thread.sleep(2000);
+            postDao.update(post);
+            postDao.flush();
+        } catch (OptimisticLockException e) {
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (InterruptedException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+        GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
+
+        return Response.ok(updatedPostDto).build();
+    }
+
+    @Path("wRetries")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updatePostWithRetries(UpdatePostDto postDto) throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException {
+        int retries = 0;
+        while (retries < 3) {
             try {
-                Post post = postDao.findById(postDto.getId(), LockModeType.OPTIMISTIC);
                 Thread.sleep(2000);
+                ut.begin();
+                Post post = postDao.findById(postDto.getId());
                 if (post == null) {
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }
 
                 post.setTitle(postDto.getTitle());
-
                 Set<Topic> topics = postDto.getTopicIds().stream()
                         .map(topicDao::findById)
                         .collect(Collectors.toSet());
                 post.setTopics(topics);
 
                 postDao.update(post);
+                postDao.flush();
 
-                GetPostDto updatedPostDto = PostMapper.toGetPostDto(post);
-                return Response.ok(updatedPostDto).build();
-
+                GetPostDto responseDto = PostMapper.toGetPostDto(post);
+                ut.commit();
+                return Response.ok(responseDto).build();
             } catch (OptimisticLockException e) {
-                if (attempts >= MAX_RETRIES) {
-                    return Response.status(Response.Status.CONFLICT)
-                            .entity("Unable to update post due to concurrent modifications.")
-                            .build();
+                if (retries < 3) {
+                    retries++;
+                    return Response.status(Response.Status.CONFLICT).build();
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         }
-
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        return Response.status(Response.Status.CONFLICT).build();
     }
 }
