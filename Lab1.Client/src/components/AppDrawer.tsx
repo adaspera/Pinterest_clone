@@ -6,12 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { createTopic, getAllTopics, Topic } from "../api/topicApi.ts";
 import { createPost } from "../api/postApi.ts";
+import ImportantCalculation from "./ImportantCalculation.tsx";
 
 const AppDrawer = () => {
     const navigate = useNavigate();
     const [topics, setTopics] = useState<Topic[]>([]);
     const [openTopicModal, setOpenTopicModal] = useState(false);
     const [openPostModal, setOpenPostModal] = useState(false);
+    const [openCalculationModel, setOpenCalculationModel] = useState(false);
     const [newTopic, setNewTopic] = useState("");
     const [newPost, setNewPost] = useState({
         title: "",
@@ -32,6 +34,9 @@ const AppDrawer = () => {
 
     const handleOpenPostModal = () => setOpenPostModal(true);
     const handleClosePostModal = () => setOpenPostModal(false);
+
+    const handleOpenCalculationModal = () => setOpenCalculationModel(true);
+    const handleCloseCalculationModal = () => setOpenCalculationModel(false);
 
     const handleAddTopic = () => {
         if (newTopic.trim() !== "") {
@@ -110,6 +115,9 @@ const AppDrawer = () => {
                     </Button>
                     <Button variant="contained" sx={{ margin: 2 }} onClick={handleOpenPostModal}>
                         Create Post
+                    </Button>
+                    <Button variant="contained" sx={{ margin: 2 }} onClick={handleOpenCalculationModal}>
+                        Important calculation
                     </Button>
                 </Box>
             </Drawer>
@@ -201,6 +209,8 @@ const AppDrawer = () => {
                     </Button>
                 </Box>
             </Modal>
+
+            <ImportantCalculation isOpen={openCalculationModel} onClose={handleCloseCalculationModal}/>
         </>
     );
 };
